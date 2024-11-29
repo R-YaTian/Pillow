@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 import os.path
-from collections.abc import Sequence
-from typing import Callable
+from typing import Callable, Sequence
 
 import pytest
 

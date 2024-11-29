@@ -2,10 +2,9 @@ from __future__ import annotations
 
 import os
 import re
-from collections.abc import Generator
 from io import BytesIO
 from pathlib import Path
-from typing import Any
+from typing import Any, Generator
 
 import pytest
 

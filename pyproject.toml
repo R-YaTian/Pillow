@@ -18,11 +18,12 @@ license = { text = "MIT-CMU" }
 authors = [
   { name = "Jeffrey A. Clark", email = "aclark@aclark.net" },
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.8"
 classifiers = [
   "Development Status :: 6 - Mature",
   "License :: OSI Approved :: CMU License (MIT-CMU)",
   "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
@@ -165,7 +166,7 @@ testpaths = [
 ]
 
 [tool.mypy]
-python_version = "3.9"
+python_version = "3.8"
 pretty = true
 disallow_any_generics = true
 enable_error_code = "ignore-without-code"

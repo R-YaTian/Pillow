@@ -8,7 +8,7 @@ import os
 import re
 import time
 import zlib
-from typing import IO, TYPE_CHECKING, Any, NamedTuple, Union
+from typing import IO, TYPE_CHECKING, Any, List, NamedTuple, Union
 
 
 # see 7.9.2.2 Text String Type on page 86 and D.3 PDFDocEncoding Character Set
@@ -246,7 +246,7 @@ class PdfName:
         return bytes(result)
 
 
-class PdfArray(list[Any]):
+class PdfArray(List[Any]):
     def __bytes__(self) -> bytes:
         return b"[ " + b" ".join(pdf_repr(x) for x in self) + b" ]"
 

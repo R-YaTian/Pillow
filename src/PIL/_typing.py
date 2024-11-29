@@ -2,8 +2,12 @@ from __future__ import annotations
 
 import os
 import sys
-from collections.abc import Sequence
 from typing import TYPE_CHECKING, Any, Protocol, TypeVar, Union
+
+if sys.version_info >= (3, 9):
+    from collections.abc import Sequence
+else:
+    from typing import Sequence
 
 if TYPE_CHECKING:
     from numbers import _IntegralLike as IntegralLike
@@ -47,7 +51,7 @@ class SupportsRead(Protocol[_T_co]):
     def read(self, __length: int = ...) -> _T_co: ...
 
 
-StrOrBytesPath = Union[str, bytes, os.PathLike[str], os.PathLike[bytes]]
+StrOrBytesPath = Union[str, bytes, "os.PathLike[str]", "os.PathLike[bytes]"]
 
 
 __all__ = ["Buffer", "IntegralLike", "StrOrBytesPath", "SupportsRead", "TypeGuard"]

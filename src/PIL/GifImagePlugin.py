@@ -31,7 +31,7 @@ import os
 import subprocess
 from enum import IntEnum
 from functools import cached_property
-from typing import IO, TYPE_CHECKING, Any, Literal, NamedTuple, Union
+from typing import IO, TYPE_CHECKING, Any, List, Literal, NamedTuple, Union
 
 from . import (
     Image,
@@ -525,7 +525,7 @@ def _normalize_mode(im: Image.Image) -> Image.Image:
     return im.convert("L")
 
 
-_Palette = Union[bytes, bytearray, list[int], ImagePalette.ImagePalette]
+_Palette = Union[bytes, bytearray, List[int], ImagePalette.ImagePalette]
 
 
 def _normalize_palette(

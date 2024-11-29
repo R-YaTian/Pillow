@@ -11,10 +11,14 @@ import subprocess
 import sys
 import sysconfig
 import tempfile
-from collections.abc import Sequence
 from functools import lru_cache
 from io import BytesIO
 from typing import Any, Callable
+
+if sys.version_info >= (3, 9):
+    from collections.abc import Sequence
+else:
+    from typing import Sequence
 
 import pytest
 from packaging.version import parse as parse_version

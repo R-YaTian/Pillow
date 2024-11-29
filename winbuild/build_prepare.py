@@ -70,8 +70,8 @@ def cmds_cmake(
                 "-DCMAKE_RULE_MESSAGES:BOOL=OFF",  # for NMake
                 "-DCMAKE_C_COMPILER=cl.exe",  # for Ninja
                 "-DCMAKE_CXX_COMPILER=cl.exe",  # for Ninja
-                "-DCMAKE_C_FLAGS=-nologo",
-                "-DCMAKE_CXX_FLAGS=-nologo",
+                "-DCMAKE_C_FLAGS=\"-nologo -D_USING_V110_SDK71_ -D_WIN32_WINNT=0x0503\"",
+                "-DCMAKE_CXX_FLAGS=\"-nologo -D_USING_V110_SDK71_ -D_WIN32_WINNT=0x0503\"",
                 *params,
                 '-G "{cmake_generator}"',
                 f'-B "{build_dir}"',
@@ -165,6 +165,12 @@ DEPS: dict[str, dict[str, Any]] = {
         "dir": f"zlib-{V['ZLIB']}",
         "license": "README",
         "license_pattern": "Copyright notice:\n\n(.+)$",
+        "patch": {
+            r"win32\Makefile.msc": {
+                'LDFLAGS = -nologo -debug -incremental:no -opt:ref': 'LDFLAGS = -nologo -debug -incremental:no -opt:ref -subsystem:console,"5.01"',
+                'CFLAGS  = -nologo -MD -W3 -O2 -Oy- -Zi -Fd"zlib" $(LOC)': 'CFLAGS  = -nologo -D_USING_V110_SDK71_ -D_WIN32_WINNT=0x0503 -MD -W3 -O2 -Oy- -Zi -Fd"zlib" $(LOC)',
+            },
+        },
         "build": [
             cmd_nmake(r"win32\Makefile.msc", "clean"),
             cmd_nmake(r"win32\Makefile.msc", "zlib.lib"),
@@ -234,7 +240,7 @@ DEPS: dict[str, dict[str, Any]] = {
                 "tiff",
                 "-DBUILD_SHARED_LIBS:BOOL=OFF",
                 "-DWebP_LIBRARY=libwebp",
-                '-DCMAKE_C_FLAGS="-nologo -DLZMA_API_STATIC"',
+                '-DCMAKE_C_FLAGS="-nologo -DLZMA_API_STATIC -D_USING_V110_SDK71_ -D_WIN32_WINNT=0x0503"',
             )
         ],
         "headers": [r"libtiff\tiff*.h"],
@@ -275,6 +281,7 @@ DEPS: dict[str, dict[str, Any]] = {
             r"builds\windows\vc2010\freetype.vcxproj": {
                 # freetype setting is /MD for .dll and /MT for .lib, we need /MD
                 "<RuntimeLibrary>MultiThreaded</RuntimeLibrary>": "<RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>",  # noqa: E501
+                "<PlatformToolset>$(DefaultPlatformToolset)</PlatformToolset>": "<PlatformToolset>v141_xp</PlatformToolset>",  # noqa: E501
                 # freetype doesn't specify SDK version, MSBuild may guess incorrectly
                 '<PropertyGroup Label="Globals">': '<PropertyGroup Label="Globals">\n    <WindowsTargetPlatformVersion>$(WindowsSDKVersion)</WindowsTargetPlatformVersion>',  # noqa: E501
             },
@@ -311,7 +318,7 @@ DEPS: dict[str, dict[str, Any]] = {
                 # default is /MD for x86 and /MT for x64, we need /MD always
                 "<RuntimeLibrary>MultiThreaded</RuntimeLibrary>": "<RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>",  # noqa: E501
                 # retarget to default toolset (selected by vcvarsall.bat)
-                "<PlatformToolset>v143</PlatformToolset>": "<PlatformToolset>$(DefaultPlatformToolset)</PlatformToolset>",  # noqa: E501
+                "<PlatformToolset>v143</PlatformToolset>": "<PlatformToolset>v141_xp</PlatformToolset>",  # noqa: E501
                 # retarget to latest (selected by vcvarsall.bat)
                 "<WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>": "<WindowsTargetPlatformVersion>$(WindowsSDKVersion)</WindowsTargetPlatformVersion>",  # noqa: E501
             }
@@ -371,7 +378,7 @@ DEPS: dict[str, dict[str, Any]] = {
             *cmds_cmake(
                 "harfbuzz",
                 "-DHB_HAVE_FREETYPE:BOOL=TRUE",
-                '-DCMAKE_CXX_FLAGS="-nologo -d2FH4-"',
+                '-DCMAKE_CXX_FLAGS="-nologo -d2FH4- -D_USING_V110_SDK71_ -D_WIN32_WINNT=0x0503"',
             ),
         ],
         "headers": [r"src\*.h"],
@@ -454,7 +461,7 @@ def find_msvs(architecture: str) -> dict[str, str] | None:
     return {
         "vs_dir": vspath,
         "msbuild": f'"{msbuild}"',
-        "vcvarsall": f'"{vcvarsall}"',
+        "vcvarsall": f'"{vcvarsall}" -vcvars_ver=14.16',
         "nmake": "nmake.exe",  # nmake selected by vcvarsall
     }
 
@@ -555,6 +562,9 @@ def build_env(prefs: dict[str, str], verbose: bool) -> None:
         cmd_set("LIB", "{lib_dir}"),
         cmd_append("PATH", "{bin_dir}"),
         "call {vcvarsall} {vcvars_arch}",
+        cmd_append("INCLUDE", "%ProgramFiles(x86)%\Microsoft SDKs\Windows\\v7.1A\Include"),
+        cmd_append("PATH", "%ProgramFiles(x86)%\Microsoft SDKs\Windows\\v7.1A\Bin"),
+        cmd_append("LIB", "%ProgramFiles(x86)%\Microsoft SDKs\Windows\\v7.1A\Lib"),
         cmd_set("DISTUTILS_USE_SDK", "1"),  # use same compiler to build Pillow
         cmd_set("py_vcruntime_redist", "true"),  # always use /MD, never /MT
         ":end",
@@ -590,14 +600,14 @@ def build_dep(name: str, prefs: dict[str, str], verbose: bool) -> str:
 
     for patch_file, patch_list in dep.get("patch", {}).items():
         patch_file = os.path.join(sources_dir, directory, patch_file.format(**prefs))
-        with open(patch_file) as f:
+        with open(patch_file, encoding="UTF-8") as f:
             text = f.read()
         for patch_from, patch_to in patch_list.items():
             patch_from = patch_from.format(**prefs)
             patch_to = patch_to.format(**prefs)
             assert patch_from in text
             text = text.replace(patch_from, patch_to)
-        with open(patch_file, "w") as f:
+        with open(patch_file, "w", encoding="UTF-8") as f:
             print(f"Patching {patch_file}")
             f.write(text)
 

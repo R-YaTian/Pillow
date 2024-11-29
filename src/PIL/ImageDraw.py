@@ -33,9 +33,8 @@ from __future__ import annotations
 
 import math
 import struct
-from collections.abc import Sequence
 from types import ModuleType
-from typing import TYPE_CHECKING, Any, AnyStr, Callable, Union, cast
+from typing import TYPE_CHECKING, Sequence, Any, AnyStr, Callable, List, Sequence, Tuple, Union, cast
 
 from . import Image, ImageColor
 from ._deprecate import deprecate
@@ -51,7 +50,7 @@ except AttributeError:
 if TYPE_CHECKING:
     from . import ImageDraw2, ImageFont
 
-_Ink = Union[float, tuple[int, ...], str]
+_Ink = Union[float, Tuple[int, ...], str]
 
 """
 A simple 2D drawing interface for PIL images.
@@ -1136,7 +1135,7 @@ def _compute_regular_polygon_vertices(
             msg = "bounding_circle should only contain numeric data"
             raise ValueError(msg)
 
-        *centroid, polygon_radius = cast(list[float], list(bounding_circle))
+        *centroid, polygon_radius = cast(List[float], list(bounding_circle))
     elif len(bounding_circle) == 2 and isinstance(bounding_circle[0], (list, tuple)):
         if not all(
             isinstance(i, (int, float)) for i in bounding_circle[0]
@@ -1148,7 +1147,7 @@ def _compute_regular_polygon_vertices(
             msg = "bounding_circle centre should contain 2D coordinates (e.g. (x, y))"
             raise ValueError(msg)
 
-        centroid = cast(list[float], list(bounding_circle[0]))
+        centroid = cast(List[float], list(bounding_circle[0]))
         polygon_radius = cast(float, bounding_circle[1])
     else:
         msg = (
