@@ -37,8 +37,8 @@ from collections.abc import Sequence
 from types import ModuleType
 from typing import Any, AnyStr, Callable, Union, cast
 
-from . import Image, ImageColor
-from ._typing import Coords
+from . import Image, ImageColor, ImageText
+from ._typing import Coords, _Ink
 
 # experimental access to the outline API
 Outline: Callable[[], Image.core._Outline] = Image.core.outline
@@ -46,8 +46,6 @@ Outline: Callable[[], Image.core._Outline] = Image.core.outline
 TYPE_CHECKING = False
 if TYPE_CHECKING:
     from . import ImageDraw2, ImageFont
-
-_Ink = Union[float, tuple[int, ...], str]
 
 """
 A simple 2D drawing interface for PIL images.
