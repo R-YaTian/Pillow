@@ -211,10 +211,9 @@ def test_exceptions() -> None:
         ImageCms.getProfileName(None)  # type: ignore[arg-type]
     skip_missing()
 
-    with pytest.raises(
-        ImageCms.PyCMSError,
-        match="'NoneType' object cannot be interpreted as an integer",
-    ):
+    # Python <= 3.9: "an integer is required (got type NoneType)"
+    # Python > 3.9: "'NoneType' object cannot be interpreted as an integer"
+    with pytest.raises(ImageCms.PyCMSError, match="integer"):
         ImageCms.isIntentSupported(SRGB, None, None)  # type: ignore[arg-type]
 
 

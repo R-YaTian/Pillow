@@ -1,16 +1,13 @@
 from __future__ import annotations
 
 import math
+from typing import Callable
 
 import pytest
 
 from PIL import Image, ImageTransform
 
 from .helper import assert_image_equal, assert_image_similar, hopper
-
-TYPE_CHECKING = False
-if TYPE_CHECKING:
-    from collections.abc import Callable
 
 
 class TestImageTransform:

@@ -20,10 +20,11 @@ license-files = [ "LICENSE" ]
 authors = [
   { name = "Jeffrey A. Clark", email = "aclark@aclark.net" },
 ]
-requires-python = ">=3.10"
+requires-python = ">=3.9"
 classifiers = [
   "Development Status :: 6 - Mature",
   "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
@@ -78,6 +79,9 @@ optional-dependencies.tests = [
   "trove-classifiers>=2024.10.12",
 ]
 
+optional-dependencies.typing = [
+  "typing-extensions; python_version<'3.10'",
+]
 optional-dependencies.xmp = [
   "defusedxml",
 ]
@@ -188,8 +192,8 @@ lint.ignore = [
   "PT011",  # pytest-raises-too-broad
   "PT012",  # pytest-raises-with-multiple-statements
   "PT017",  # pytest-assert-in-except
+  "PYI026", # flake8-pyi: typing.TypeAlias added in Python 3.10
   "PYI034", # flake8-pyi: typing.Self added in Python 3.11
-  "UP038",  # pyupgrade: deprecated rule
 ]
 lint.per-file-ignores."Tests/oss-fuzz/fuzz_font.py" = [
   "I002",
@@ -215,7 +219,7 @@ testpaths = [
 ]
 
 [tool.mypy]
-python_version = "3.10"
+python_version = "3.9"
 pretty = true
 disallow_any_generics = true
 enable_error_code = "ignore-without-code"

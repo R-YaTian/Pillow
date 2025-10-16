@@ -47,24 +47,22 @@ import math
 import os
 import struct
 import warnings
-from collections.abc import Callable, MutableMapping
+from collections.abc import Iterator, MutableMapping
 from fractions import Fraction
 from numbers import Number, Rational
-from typing import IO, Any, cast
+from typing import IO, Any, Callable, NoReturn, cast
 
 from . import ExifTags, Image, ImageFile, ImageOps, ImagePalette, TiffTags
 from ._binary import i16be as i16
 from ._binary import i32be as i32
 from ._binary import o8
+from ._typing import StrOrBytesPath
 from ._util import DeferredError, is_path
 from .TiffTags import TYPES
 
 TYPE_CHECKING = False
 if TYPE_CHECKING:
-    from collections.abc import Iterator
-    from typing import NoReturn
-
-    from ._typing import Buffer, IntegralLike, StrOrBytesPath
+    from ._typing import Buffer, IntegralLike
 
 logger = logging.getLogger(__name__)
 

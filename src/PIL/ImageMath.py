@@ -17,14 +17,10 @@
 from __future__ import annotations
 
 import builtins
+from types import CodeType
+from typing import Any, Callable
 
 from . import Image, _imagingmath
-
-TYPE_CHECKING = False
-if TYPE_CHECKING:
-    from collections.abc import Callable
-    from types import CodeType
-    from typing import Any
 
 
 class _Operand:
