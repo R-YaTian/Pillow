@@ -73,18 +73,3 @@ if [[ $(uname) != CYGWIN* ]]; then
 else
     cd depends && ./install_extra_test_images.sh && cd ..
 fi
-
-# webp
-pushd depends && ./install_webp.sh && popd
-
-# libimagequant
-pushd depends && ./install_imagequant.sh && popd
-
-# raqm
-pushd depends && sudo ./install_raqm.sh && popd
-
-# libavif
-pushd depends && sudo ./install_libavif.sh && popd
-
-# extra test images
-pushd depends && ./install_extra_test_images.sh && popd

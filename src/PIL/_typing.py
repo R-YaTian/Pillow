@@ -37,6 +37,7 @@ else:
             def __class_getitem__(cls, item: Any) -> type[bool]:
                 return bool
 
+
 _Ink = Union[float, tuple[int, ...], str]
 
 Coords = Union[Sequence[float], Sequence[Sequence[float]]]

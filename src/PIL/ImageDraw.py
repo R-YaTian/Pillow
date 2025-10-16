@@ -35,7 +35,7 @@ import math
 import struct
 from collections.abc import Sequence
 from types import ModuleType
-from typing import Any, AnyStr, Callable, Union, cast
+from typing import Any, AnyStr, Callable, cast
 
 from . import Image, ImageColor, ImageText
 from ._typing import Coords, _Ink
